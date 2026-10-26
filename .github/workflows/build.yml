@@ -12,19 +12,20 @@ jobs:
       - name: Cài đặt công cụ biên dịch Linux
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot build-essential perl libssl-dev unzip
+          sudo apt-get install -y fakeroot build-essential perl libssl-dev unzip wget tar xz-utils
 
-      - name: Tải và Giải nén bộ khung Theos từ tệp ZIP
+      - name: Tải và Giải nén bộ khung Theos (Sử dụng Wget dứt điểm)
         run: |
-          curl -LO https://github.com
+          wget --no-check-certificate https://github.com -O master.zip
           unzip master.zip
           mv theos-master $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-      - name: Tải bộ SDK iOS 14.5 (Bắt buộc để biên dịch arm64)
+      - name: Tải bộ SDK iOS 14.5 siêu tốc
         run: |
-          curl -LO https://github.com
-          tar -xf iPhoneOS14.5.sdk.tar.xz
+          wget --no-check-certificate https://github.com -O SDK.tar.xz
+          tar -xf SDK.tar.xz
+          mkdir -p $HOME/theos/sdks
           mv iPhoneOS14.5.sdk $HOME/theos/sdks/
 
       - name: Biên dịch mã nguồn Tweak thành dylib
