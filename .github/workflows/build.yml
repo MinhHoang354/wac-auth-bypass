@@ -4,7 +4,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout mã nguồn
         uses: actions/checkout@v4
@@ -12,17 +12,29 @@ jobs:
       - name: Cài đặt công cụ biên dịch Linux
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot git build-essential perl libssl-dev
+          sudo apt-get install -y fakeroot build-essential perl libssl-dev unrar unzip
 
-      - name: Khởi tạo Theos tự động
+      - name: Nạp bộ khung Theos siêu nhẹ
         run: |
-          git clone --recursive https://github.com $HOME/theos
-          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          bash -c "$(curl -fsSL https://githubusercontent.com)"
+          echo "THEOS=/opt/theos" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Cấu hình môi trường Theos thay thế dự phòng
+        run: |
+          if [ ! -d "/opt/theos" ]; then
+            git clone --depth 1 https://github.com $HOME/theos
+            echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          fi
 
       - name: Biên dịch mã nguồn Tweak thành dylib
         run: |
-          $HOME/theos/bin/logify.pl || true
-          make package FINALPACKAGE=1
+          if [ -d "$HOME/theos" ]; then
+            $HOME/theos/bin/logify.pl || true
+            make package FINALPACKAGE=1 THEOS=$HOME/theos
+          else
+            make package FINALPACKAGE=1 THEOS=/opt/theos
+          fi
         env:
           THEOS_DEVICE_IP: localhost
 
