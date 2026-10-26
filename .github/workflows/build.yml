@@ -9,13 +9,19 @@ jobs:
       - name: Checkout mã nguồn
         uses: actions/checkout@v4
 
-      - name: Khởi tạo môi trường Theos chuyên dụng
-        uses: theos/setup-theos-action@v1
-        with:
-          theos-src: https://github.com
+      - name: Cài đặt công cụ biên dịch Linux
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot git build-essential perl libssl-dev
+
+      - name: Khởi tạo Theos tự động
+        run: |
+          git clone --recursive https://github.com $HOME/theos
+          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
       - name: Biên dịch mã nguồn Tweak thành dylib
         run: |
+          $HOME/theos/bin/logify.pl || true
           make package FINALPACKAGE=1
         env:
           THEOS_DEVICE_IP: localhost
