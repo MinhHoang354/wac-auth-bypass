@@ -7,10 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout mã nguồn
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Khởi tạo môi trường Theos
-        uses: canisterio/setup-theos-action@v1
+      - name: Khởi tạo môi trường Theos chuyên dụng
+        uses: theos/setup-theos-action@v1
+        with:
+          theos-src: https://github.com
 
       - name: Biên dịch mã nguồn Tweak thành dylib
         run: |
@@ -18,8 +20,8 @@ jobs:
         env:
           THEOS_DEVICE_IP: localhost
 
-      - name: Tải file dylib thành phẩm lên GitHub
-        uses: actions/upload-artifact@v3
+      - name: Tải file dylib thành phẩm lên GitHub (v4)
+        uses: actions/upload-artifact@v4
         with:
           name: WACBypass-Dylib
           path: .theos/obj/debug/*.dylib
