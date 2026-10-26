@@ -1,0 +1,8 @@
+Package: com.hoang.wacbypass
+Name: WACBypass
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Bo gia lap mang tinh be khoa vinh vien
+Maintainer: Hoang
+Author: Hoang
